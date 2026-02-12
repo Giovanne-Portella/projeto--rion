@@ -1,31 +1,36 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import MainLayout from './components/Layout/MainLayout';
 import Dashboard from './pages/Dashboard';
-// Importaremos a página de Importação no próximo passo, por enquanto fica comentado
 import ImportPage from './pages/Importation/ImportPage';
+import Welcome from './pages/Welcome';
+import MainLayout from './components/Layout/MainLayout';
+import { authService } from './services/api';
 
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('orion_token');
-  return token ? children : <Navigate to="/login" />;
+  const isAuthenticated = authService.isAuthenticated();
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         
-        {/* Todas as rotas internas usam o MainLayout */}
-        <Route element={<PrivateRoute><MainLayout /></PrivateRoute>}>
-           <Route path="/dashboard" element={<Dashboard />} />
-           <Route path="/settings" element={<div className="p-8">Configurações (Em construção)</div>} />
-           <Route path="/import" element={<ImportPage />} />
-           {/* Redireciona qualquer rota desconhecida para o dashboard */}
-           <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<PrivateRoute><MainLayout /></PrivateRoute>}>
+          {}
+          <Route index element={<Navigate to="/welcome" replace />} />
+          
+          <Route path="welcome" element={<Welcome />} /> {}
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="import" element={<ImportPage />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App;

@@ -18,7 +18,7 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -30,14 +30,9 @@ export default function Login() {
     }
 
     try {
-      const loginData = await authService.login(formData.company, formData.username, formData.password);
-      
-      const userData = {
-        name: loginData.username,
-        company: loginData.company_destination,
-      };
-      localStorage.setItem('orion_user', JSON.stringify(userData));
-
+      // Chama o login. O api.js já vai salvar o token e o usuário no localStorage.
+      await authService.login(formData.company, formData.username, formData.password);
+            
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
